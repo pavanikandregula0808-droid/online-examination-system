@@ -41,12 +41,14 @@ export function CameraPreview() {
 
   useEffect(() => {
     if (
-      detectionStatus === "detected" ||
-      detectionStatus === "not-detected" ||
-      detectionStatus === "multiple-faces"
-    ) {
-      evaluateDetection(faceCount);
-    }
+  detectionStatus === "detected" ||
+  detectionStatus === "not-detected" ||
+  detectionStatus === "multiple-faces" ||
+  detectionStatus === "face-too-small" ||
+  detectionStatus === "face-off-center"
+) {
+  evaluateDetection(faceCount);
+}
   }, [detectionStatus, faceCount, evaluateDetection]);
 
   const handleCapture = () => {
@@ -595,7 +597,57 @@ export function CameraPreview() {
 
                     </div>
                   )}
+                    {/* Face too small */}
+{detectionStatus === "face-too-small" && (
+  <div
+    role="alert"
+    className="flex min-h-[185px] flex-col justify-center rounded-xl border border-amber-200 bg-amber-50 p-4"
+  >
+    <div className="flex items-center justify-between gap-3">
+      <p className="font-semibold text-amber-900">
+        ⚠ Face too far away
+      </p>
 
+      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+        Face detected
+      </span>
+    </div>
+
+    <p className="mt-2 text-sm leading-5 text-amber-800">
+      Your face is too small in the captured image.
+    </p>
+
+    <p className="mt-2 text-sm font-medium text-amber-900">
+      Please move closer to the camera and retake the photo.
+    </p>
+  </div>
+)}
+
+{/* Face off-center */}
+{detectionStatus === "face-off-center" && (
+  <div
+    role="alert"
+    className="flex min-h-[185px] flex-col justify-center rounded-xl border border-amber-200 bg-amber-50 p-4"
+  >
+    <div className="flex items-center justify-between gap-3">
+      <p className="font-semibold text-amber-900">
+        ⚠ Face not properly positioned
+      </p>
+
+      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+        Face detected
+      </span>
+    </div>
+
+    <p className="mt-2 text-sm leading-5 text-amber-800">
+      Your face is not positioned well inside the camera frame.
+    </p>
+
+    <p className="mt-2 text-sm font-medium text-amber-900">
+      Please position your face inside the frame and retake the photo.
+    </p>
+  </div>
+)}
                   {/* Detection error */}
                   {detectionStatus === "error" && (
                     <div

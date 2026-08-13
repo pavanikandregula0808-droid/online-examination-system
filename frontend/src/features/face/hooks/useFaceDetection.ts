@@ -13,12 +13,22 @@ export type FaceDetectionStatus =
   | "detected"
   | "not-detected"
   | "multiple-faces"
+  | "face-too-small"
+  | "face-off-center"
   | "error";
+
+interface FaceDetectionQuality {
+  faceWidthRatio: number;
+  faceHeightRatio: number;
+  centerXRatio: number;
+  centerYRatio: number;
+}
 
 interface UseFaceDetectionResult {
   status: FaceDetectionStatus;
   faceCount: number;
   error: string | null;
+  quality: FaceDetectionQuality | null;
   detectFace: (imageDataUrl: string) => Promise<void>;
   resetDetection: () => void;
 }
@@ -39,6 +49,9 @@ export function useFaceDetection(): UseFaceDetectionResult {
 
   const [error, setError] =
     useState<string | null>(null);
+
+  const [quality, setQuality] =
+    useState<FaceDetectionQuality | null>(null);
 
   const initializeDetector = useCallback(async () => {
     if (detectorRef.current) {
@@ -72,6 +85,7 @@ export function useFaceDetection(): UseFaceDetectionResult {
     setStatus("idle");
     setFaceCount(0);
     setError(null);
+    setQuality(null);
   }, []);
 
   const detectFace = useCallback(
@@ -79,6 +93,7 @@ export function useFaceDetection(): UseFaceDetectionResult {
       setStatus("detecting");
       setError(null);
       setFaceCount(0);
+      setQuality(null);
 
       try {
         const detector =
@@ -107,16 +122,114 @@ export function useFaceDetection(): UseFaceDetectionResult {
 
         setFaceCount(detectedFaceCount);
 
+        // No face
         if (detectedFaceCount === 0) {
           setStatus("not-detected");
           return;
         }
 
+        // More than one face
         if (detectedFaceCount > 1) {
           setStatus("multiple-faces");
           return;
         }
 
+        const detection = result.detections[0];
+
+        if (!detection.boundingBox) {
+          setStatus("detected");
+          return;
+        }
+
+        const {
+          originX,
+          originY,
+          width,
+          height,
+        } = detection.boundingBox;
+
+        const imageWidth = image.naturalWidth;
+        const imageHeight = image.naturalHeight;
+
+        if (!imageWidth || !imageHeight) {
+          setStatus("detected");
+          return;
+        }
+
+        const faceWidthRatio =
+          width / imageWidth;
+
+        const faceHeightRatio =
+          height / imageHeight;
+
+        const faceCenterX =
+          originX + width / 2;
+
+        const faceCenterY =
+          originY + height / 2;
+
+        const centerXRatio =
+          faceCenterX / imageWidth;
+
+        const centerYRatio =
+          faceCenterY / imageHeight;
+
+        const faceQuality: FaceDetectionQuality = {
+          faceWidthRatio,
+          faceHeightRatio,
+          centerXRatio,
+          centerYRatio,
+        };
+
+        setQuality(faceQuality);
+
+        /*
+         * Face size validation
+         *
+         * We don't require the face to fill the entire
+         * camera frame. We only make sure the detected
+         * face is large enough to be useful.
+         */
+        const minimumFaceWidthRatio = 0.15;
+        const minimumFaceHeightRatio = 0.15;
+
+        if (
+          faceWidthRatio < minimumFaceWidthRatio ||
+          faceHeightRatio < minimumFaceHeightRatio
+        ) {
+          setStatus("face-too-small");
+          return;
+        }
+
+        /*
+         * Face position validation
+         *
+         * We allow a reasonable amount of movement instead
+         * of requiring the face to be perfectly centered.
+         */
+        const minimumCenterX = 0.30;
+        const maximumCenterX = 0.70;
+
+        const minimumCenterY = 0.25;
+        const maximumCenterY = 0.75;
+
+        const isHorizontallyCentered =
+          centerXRatio >= minimumCenterX &&
+          centerXRatio <= maximumCenterX;
+
+        const isVerticallyCentered =
+          centerYRatio >= minimumCenterY &&
+          centerYRatio <= maximumCenterY;
+
+        if (
+          !isHorizontallyCentered ||
+          !isVerticallyCentered
+        ) {
+          setStatus("face-off-center");
+          return;
+        }
+
+        // Exactly one face with acceptable quality
         setStatus("detected");
       } catch (detectionError) {
         console.error(
@@ -145,6 +258,7 @@ export function useFaceDetection(): UseFaceDetectionResult {
     status,
     faceCount,
     error,
+    quality,
     detectFace,
     resetDetection,
   };
