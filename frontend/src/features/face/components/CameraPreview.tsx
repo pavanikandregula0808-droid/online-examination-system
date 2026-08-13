@@ -3,6 +3,7 @@ import { useCamera } from "../hooks/useCamera";
 import { useFaceCapture } from "../hooks/useFaceCapture";
 import { useFaceDetection } from "../hooks/useFaceDetection";
 import { useFaceVerification } from "../hooks/useFaceVerification";
+import { facePrivacyPolicy } from "../privacyPolicy";
 
 export function CameraPreview() {
   const {
@@ -75,112 +76,97 @@ export function CameraPreview() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50 px-4 py-5 sm:px-6 lg:px-8">
 
-      {/* Top Header */}
-      <div className="mx-auto mb-8 flex max-w-7xl items-center justify-between rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
+      {/* =========================================================
+          TOP HEADER
+      ========================================================= */}
+      <div className="mx-auto mb-6 flex max-w-7xl items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
         <div>
-          <p className="text-lg font-bold text-slate-900">
+          <p className="text-base font-bold text-slate-900">
             Online Examination
           </p>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-xs text-slate-500">
             Secure • Reliable • Transparent
           </p>
         </div>
 
-        <div className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+        <div className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
           Step 1 of 3
         </div>
       </div>
 
-      {/* Page Header */}
-      <header className="mx-auto mb-8 max-w-7xl text-center">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-blue-600">
-          Online Examination
-        </p>
+      {/* =========================================================
+          PAGE HEADER
+      ========================================================= */}
+      <header className="mx-auto mb-6 max-w-7xl text-center">
 
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
           Identity Verification
         </h1>
 
-        <div className="mx-auto mt-3 h-1 w-14 rounded-full bg-blue-600" />
-
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600">
-          Capture a clear photo for the examination verification process.
-          Make sure only you are visible in the camera frame.
+        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600">
+          Capture a clear photo for examination verification.
         </p>
+
       </header>
 
-      {/* Main Card */}
+      {/* =========================================================
+          MAIN CARD
+      ========================================================= */}
       <section className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
 
         {/* Card Header */}
-        <div className="border-b border-slate-200 px-6 py-5 sm:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
 
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">
-                Face Capture
-              </h2>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">
+              Face Capture
+            </h2>
 
-              <p className="mt-1 text-sm text-slate-500">
-                Position your face inside the camera frame.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-
-              {isCameraReady ? "Camera Ready" : "Camera Not Ready"}
-            </div>
-
+            <p className="mt-0.5 text-xs text-slate-500">
+              Position your face inside the camera frame.
+            </p>
           </div>
+
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${
+                isCameraReady
+                  ? "bg-emerald-500"
+                  : "bg-slate-300"
+              }`}
+            />
+
+            <span
+              className={
+                isCameraReady
+                  ? "text-emerald-600"
+                  : "text-slate-500"
+              }
+            >
+              {isCameraReady
+                ? "Camera Ready"
+                : "Camera Not Ready"}
+            </span>
+          </div>
+
         </div>
 
-        <div className="p-6 sm:p-8">
+        <div className="p-5 sm:p-7">
 
-          {/* Instructions */}
-          <div className="mb-8 grid gap-4 md:grid-cols-3">
+          {/* =====================================================
+              LEFT CAMERA + RIGHT STATUS
+          ===================================================== */}
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.85fr)]">
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-              <p className="font-semibold text-slate-900">
-                Face forward
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Look directly toward the camera with your face clearly visible.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-              <p className="font-semibold text-slate-900">
-                Good lighting
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Make sure your face is well lit and clearly visible.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-              <p className="font-semibold text-slate-900">
-                One person only
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                No other person should appear in the camera frame.
-              </p>
-            </div>
-
-          </div>
-
-          {/* Camera + Status */}
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(300px,0.8fr)]">
-
-            {/* Camera Section */}
+            {/* ===================================================
+                LEFT SIDE — CAMERA
+            =================================================== */}
             <div className="min-w-0">
 
+              {/* Camera */}
               <div className="relative overflow-hidden rounded-2xl bg-slate-950">
 
                 <video
@@ -201,25 +187,28 @@ export function CameraPreview() {
                   />
                 )}
 
-                {/* Face Positioning Frame */}
+                {/* Face positioning frame */}
                 {!capturedImage && isCameraReady && (
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div className="h-[75%] w-[38%] min-w-44 rounded-[45%] border-2 border-dashed border-white/90 shadow-[0_0_0_9999px_rgba(15,23,42,0.2)]" />
+
+                    <div className="h-[74%] w-[38%] min-w-40 rounded-[45%] border-2 border-dashed border-white/90 shadow-[0_0_0_9999px_rgba(15,23,42,0.2)]" />
+
                   </div>
                 )}
 
-                {/* Camera State */}
+                {/* Camera state */}
                 {!capturedImage && !isCameraReady && (
-                  <div className="absolute inset-0 flex items-center justify-center px-6">
+                  <div className="absolute inset-0 flex items-center justify-center px-5">
+
                     <div className="max-w-sm text-center text-white">
 
                       {status === "idle" && (
                         <>
-                          <p className="text-xl font-bold">
+                          <p className="text-lg font-bold">
                             Camera access required
                           </p>
 
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-1.5 text-sm text-slate-300">
                             Allow camera access to continue.
                           </p>
                         </>
@@ -227,11 +216,11 @@ export function CameraPreview() {
 
                       {isRequesting && (
                         <>
-                          <p className="text-xl font-bold">
+                          <p className="text-lg font-bold">
                             Starting camera...
                           </p>
 
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-1.5 text-sm text-slate-300">
                             Please wait.
                           </p>
                         </>
@@ -239,24 +228,24 @@ export function CameraPreview() {
 
                       {status === "denied" && (
                         <>
-                          <p className="text-xl font-bold">
+                          <p className="text-lg font-bold">
                             Camera permission denied
                           </p>
 
-                          <p className="mt-2 text-sm text-slate-300">
-                            Allow camera permission in your browser and try
-                            again.
+                          <p className="mt-1.5 text-sm text-slate-300">
+                            Allow camera permission in your browser
+                            and try again.
                           </p>
                         </>
                       )}
 
                       {status === "unavailable" && (
                         <>
-                          <p className="text-xl font-bold">
+                          <p className="text-lg font-bold">
                             Camera unavailable
                           </p>
 
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-1.5 text-sm text-slate-300">
                             No usable camera was found on this device.
                           </p>
                         </>
@@ -264,24 +253,27 @@ export function CameraPreview() {
 
                       {status === "error" && (
                         <>
-                          <p className="text-xl font-bold">
+                          <p className="text-lg font-bold">
                             Camera error
                           </p>
 
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-1.5 text-sm text-slate-300">
                             {error ?? "Unable to start the camera."}
                           </p>
                         </>
                       )}
 
                     </div>
+
                   </div>
                 )}
 
               </div>
 
-              {/* Camera Controls */}
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              {/* =================================================
+                  CAMERA CONTROLS
+              ================================================= */}
+              <div className="mt-3 flex flex-col gap-2.5 sm:flex-row">
 
                 {!capturedImage && !isCameraReady && (
                   <button
@@ -290,7 +282,7 @@ export function CameraPreview() {
                       void startCamera();
                     }}
                     disabled={isRequesting}
-                    className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isRequesting
                       ? "Starting camera..."
@@ -303,7 +295,7 @@ export function CameraPreview() {
                     <button
                       type="button"
                       onClick={handleCapture}
-                      className="flex-1 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-blue-700"
+                      className="flex-1 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
                     >
                       Capture Photo
                     </button>
@@ -311,7 +303,7 @@ export function CameraPreview() {
                     <button
                       type="button"
                       onClick={stopCamera}
-                      className="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                      className="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                     >
                       Stop Camera
                     </button>
@@ -325,7 +317,7 @@ export function CameraPreview() {
                       <button
                         type="button"
                         onClick={handleDetectFace}
-                        className="flex-1 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-blue-700"
+                        className="flex-1 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
                       >
                         Detect Face
                       </button>
@@ -334,7 +326,7 @@ export function CameraPreview() {
                     <button
                       type="button"
                       onClick={handleRetake}
-                      className="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                      className="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                     >
                       Retake
                     </button>
@@ -343,158 +335,348 @@ export function CameraPreview() {
 
               </div>
 
-            </div>
+              {/* =================================================
+                  THREE INSTRUCTIONS
+              ================================================= */}
+              <div className="mt-4 grid grid-cols-3 gap-2.5">
 
-            {/* Status Section */}
-            <aside className="rounded-2xl border border-slate-200 bg-white p-5">
+                {/* 01 */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
 
-              <h3 className="text-lg font-bold text-slate-900">
-                Status
-              </h3>
-
-              <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
-                <p className="text-sm font-semibold text-blue-900">
-                  Verification guidance
-                </p>
-
-                <p className="mt-2 text-sm leading-6 text-blue-800">
-                  Capture your photo first, then select
-                  <strong> Detect Face </strong>
-                  to check whether exactly one face is present.
-                </p>
-              </div>
-
-              <div className="mt-6">
-                <p className="mb-3 text-sm font-bold text-slate-900">
-                  Face Detection Status
-                </p>
-
-                <div className="space-y-3">
-
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-                    <p className="font-semibold text-amber-900">
-                      No face detected
-                    </p>
-
-                    <p className="mt-1 text-sm text-amber-800">
-                      No face was found in the image.
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                    <p className="font-semibold text-emerald-900">
-                      One face detected
-                    </p>
-
-                    <p className="mt-1 text-sm text-emerald-800">
-                      Exactly one face was detected.
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                    <p className="font-semibold text-red-900">
-                      Multiple faces detected
-                    </p>
-
-                    <p className="mt-1 text-sm text-red-800">
-                      More than one face was found.
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <p className="font-semibold text-slate-900">
-                      Detection error
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-600">
-                      Face detection could not be completed.
-                    </p>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* Dynamic Result */}
-              {capturedImage && (
-                <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
-
-                  <p className="text-sm font-bold text-slate-900">
-                    Current Result
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                    01
                   </p>
 
-                  {detectionStatus === "loading" && (
-                    <p className="mt-2 text-sm text-blue-700">
-                      Loading face detection model...
+                  <p className="mt-0.5 text-xs font-bold text-slate-900 sm:text-sm">
+                    Face forward
+                  </p>
+
+                  <p className="mt-0.5 text-[11px] leading-4 text-slate-500">
+                    Look directly toward the camera.
+                  </p>
+
+                </div>
+
+                {/* 02 */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                    02
+                  </p>
+
+                  <p className="mt-0.5 text-xs font-bold text-slate-900 sm:text-sm">
+                    Good lighting
+                  </p>
+
+                  <p className="mt-0.5 text-[11px] leading-4 text-slate-500">
+                    Keep your face clearly visible.
+                  </p>
+
+                </div>
+
+                {/* 03 */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                    03
+                  </p>
+
+                  <p className="mt-0.5 text-xs font-bold text-slate-900 sm:text-sm">
+                    One person only
+                  </p>
+
+                  <p className="mt-0.5 text-[11px] leading-4 text-slate-500">
+                    No other person in the frame.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* ===================================================
+                RIGHT SIDE — RESULT + PRIVACY
+            =================================================== */}
+            <aside className="min-w-0">
+
+              {/* =================================================
+                  VERIFICATION RESULT
+              ================================================= */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+                    <p className="text-base font-bold text-slate-900">
+                      Verification Result
                     </p>
+
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      Current face-detection status
+                    </p>
+                  </div>
+
+                  {faceCount > 0 && (
+                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                      {faceCount}{" "}
+                      {faceCount === 1 ? "face" : "faces"}
+                    </span>
                   )}
 
-                  {detectionStatus === "detecting" && (
-                    <p className="mt-2 text-sm text-blue-700">
-                      Detecting faces...
-                    </p>
-                  )}
+                </div>
 
-                  {detectionStatus === "detected" && (
-                    <p className="mt-2 text-sm font-semibold text-emerald-700">
-                      Exactly one face detected. Face count: {faceCount}
-                    </p>
-                  )}
+                {/* Fixed-height result container */}
+                <div className="mt-4 min-h-[185px]">
 
-                  {detectionStatus === "not-detected" && (
-                    <p className="mt-2 text-sm font-semibold text-amber-700">
-                      No face detected. Please retake the photo.
-                    </p>
-                  )}
+                  {/* Before detection */}
+                  {capturedImage &&
+                    (detectionStatus === "idle" ||
+                      detectionStatus === "ready") && (
+                    <div className="flex min-h-[185px] flex-col justify-center rounded-xl border border-blue-200 bg-blue-50 p-4">
 
-                  {detectionStatus === "multiple-faces" && (
-                    <p className="mt-2 text-sm font-semibold text-red-700">
-                      Multiple faces detected: {faceCount}. Please retake the
-                      photo with only one person visible.
-                    </p>
-                  )}
-
-                  {detectionStatus === "error" && (
-                    <p className="mt-2 text-sm text-red-700">
-                      {detectionError ??
-                        "Face detection could not be completed."}
-                    </p>
-                  )}
-
-                  {verificationStatus === "passed" && canProceed && (
-                    <div className="mt-4 border-t border-slate-200 pt-4">
-                      <p className="text-sm font-bold text-emerald-700">
-                        Face-detection requirement passed
+                      <p className="font-semibold text-blue-900">
+                        Verification ready
                       </p>
 
-                      <p className="mt-1 text-sm text-slate-600">
-                        {verificationMessage}
+                      <p className="mt-1.5 text-sm leading-5 text-blue-700">
+                        Your photo has been captured.
+                        Select <strong>Detect Face</strong> to
+                        check whether exactly one face is present.
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* No image yet */}
+                  {!capturedImage &&
+                    detectionStatus === "idle" && (
+                    <div className="flex min-h-[185px] flex-col justify-center rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+                      <p className="font-semibold text-slate-800">
+                        Waiting for photo
+                      </p>
+
+                      <p className="mt-1.5 text-sm leading-5 text-slate-500">
+                        Start the camera and capture a clear photo
+                        to begin verification.
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* Loading */}
+                  {detectionStatus === "loading" && (
+                    <div
+                      role="status"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-blue-200 bg-blue-50 p-4"
+                    >
+                      <p className="font-semibold text-blue-900">
+                        Preparing face detection
+                      </p>
+
+                      <p className="mt-1.5 text-sm leading-5 text-blue-700">
+                        Loading the face detection model...
                       </p>
                     </div>
                   )}
 
+                  {/* Detecting */}
+                  {detectionStatus === "detecting" && (
+                    <div
+                      role="status"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-blue-200 bg-blue-50 p-4"
+                    >
+                      <p className="font-semibold text-blue-900">
+                        Checking your photo
+                      </p>
+
+                      <p className="mt-1.5 text-sm leading-5 text-blue-700">
+                        Detecting faces in the captured image...
+                      </p>
+                    </div>
+                  )}
+
+                  {/* One face */}
+                  {detectionStatus === "detected" && (
+                    <div
+                      role="status"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-emerald-200 bg-emerald-50 p-4"
+                    >
+
+                      <div className="flex items-center justify-between gap-3">
+
+                        <p className="font-semibold text-emerald-900">
+                          ✓ One face detected
+                        </p>
+
+                        <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                          Face count: {faceCount}
+                        </span>
+
+                      </div>
+
+                      <p className="mt-2 text-sm leading-5 text-emerald-700">
+                        Exactly one face was detected.
+                        You can proceed to the next verification
+                        stage.
+                      </p>
+
+                      {verificationStatus === "passed" &&
+                        canProceed && (
+                          <p className="mt-2 text-xs font-medium leading-5 text-emerald-800">
+                            {verificationMessage}
+                          </p>
+                        )}
+
+                    </div>
+                  )}
+
+                  {/* No face */}
+                  {detectionStatus === "not-detected" && (
+                    <div
+                      role="alert"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-amber-200 bg-amber-50 p-4"
+                    >
+
+                      <div className="flex items-center justify-between gap-3">
+
+                        <p className="font-semibold text-amber-900">
+                          ⚠ No face detected
+                        </p>
+
+                        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                          Face count: 0
+                        </span>
+
+                      </div>
+
+                      <p className="mt-2 text-sm leading-5 text-amber-800">
+                        We could not detect a face in the captured
+                        image.
+                      </p>
+
+                      <p className="mt-2 text-sm font-medium leading-5 text-amber-900">
+                        Please retake the photo and make sure your
+                        face is clearly visible.
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* Multiple faces */}
+                  {detectionStatus === "multiple-faces" && (
+                    <div
+                      role="alert"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-red-200 bg-red-50 p-4"
+                    >
+
+                      <div className="flex items-center justify-between gap-3">
+
+                        <p className="font-semibold text-red-900">
+                          ⚠ Multiple faces detected
+                        </p>
+
+                        <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+                          {faceCount} faces
+                        </span>
+
+                      </div>
+
+                      <p className="mt-2 text-sm leading-5 text-red-800">
+                        More than one person was detected in the
+                        captured image.
+                      </p>
+
+                      <p className="mt-2 text-sm font-medium leading-5 text-red-900">
+                        Please make sure nobody else is visible
+                        and retake the photo.
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* Detection error */}
+                  {detectionStatus === "error" && (
+                    <div
+                      role="alert"
+                      className="flex min-h-[185px] flex-col justify-center rounded-xl border border-red-200 bg-red-50 p-4"
+                    >
+
+                      <p className="font-semibold text-red-900">
+                        Face detection failed
+                      </p>
+
+                      <p className="mt-1.5 text-sm leading-5 text-red-700">
+                        {detectionError ??
+                          "Face detection could not be completed. Please try again."}
+                      </p>
+
+                    </div>
+                  )}
+
                 </div>
-              )}
+
+              </div>
+
+              {/* =================================================
+                  PRIVACY NOTICE
+              ================================================= */}
+              <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+
+                <p className="text-sm font-bold text-slate-900">
+                  Privacy Notice
+                </p>
+
+                <div className="mt-2.5 space-y-1.5 text-xs leading-5 text-slate-600">
+
+                  <p>
+                    <span className="font-semibold text-slate-800">
+                      Purpose:
+                    </span>{" "}
+                    {facePrivacyPolicy.capturePurpose}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold text-slate-800">
+                      Processing:
+                    </span>{" "}
+                    {facePrivacyPolicy.processingLocation}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold text-slate-800">
+                      Storage:
+                    </span>{" "}
+                    {facePrivacyPolicy.rawImageStorage}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold text-slate-800">
+                      Upload:
+                    </span>{" "}
+                    {facePrivacyPolicy.serverUpload}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold text-slate-800">
+                      Identity verification:
+                    </span>{" "}
+                    {facePrivacyPolicy.identityVerification}
+                  </p>
+
+                </div>
+
+              </div>
 
             </aside>
 
           </div>
 
-          {/* Privacy Notice */}
-          <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
-
-            <p className="text-sm font-bold text-slate-900">
-              Privacy Notice
-            </p>
-
-            <p className="mt-1 text-sm leading-6 text-slate-600">
-              This stage checks whether a face is present in the captured
-              image. Face detection alone does not confirm your identity.
-            </p>
-
-          </div>
-
         </div>
+
       </section>
+
     </main>
   );
 }
