@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useCamera } from "../hooks/useCamera";
+import { ExamMonitoring } from "./ExamMonitoring";
 import { useFaceCapture } from "../hooks/useFaceCapture";
 import { useFaceDetection } from "../hooks/useFaceDetection";
 import { useFaceVerification } from "../hooks/useFaceVerification";
@@ -723,7 +724,8 @@ export function CameraPreview() {
 
             </aside>
 
-          </div>
+                    </div>
+
 
         </div>
 
