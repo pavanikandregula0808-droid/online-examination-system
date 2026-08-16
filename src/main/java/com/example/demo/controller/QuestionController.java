@@ -64,7 +64,8 @@ public class QuestionController {
     @GetMapping("/random/{count}")
     public List<Question> getRandomQuestions(@PathVariable int count) {
 
-        List<Question> questions = new ArrayList<>(questionRepository.findAll());
+        List<Question> questions =
+                new ArrayList<>(questionRepository.findAll());
 
         Collections.shuffle(questions);
 
@@ -78,32 +79,51 @@ public class QuestionController {
             @PathVariable int count) {
 
         // Get all questions
-        List<Question> questions = questionRepository.findAll();
+        List<Question> questions =
+                questionRepository.findAll();
 
         // Select fixed questions based on ID
-        List<Question> selectedQuestions = questions.stream()
-                .sorted((q1, q2) -> q1.getId().compareTo(q2.getId()))
-                .limit(count)
-                .toList();
+        List<Question> selectedQuestions =
+                questions.stream()
+                        .sorted((q1, q2) ->
+                                q1.getId().compareTo(q2.getId()))
+                        .limit(count)
+                        .toList();
 
-        // Create a mutable list so that we can shuffle the order
+        // Shuffle question order
         List<Question> shuffledQuestions =
                 new ArrayList<>(selectedQuestions);
 
-        // Shuffle only the order
         Collections.shuffle(shuffledQuestions);
 
         return shuffledQuestions.stream()
                 .map(question -> {
 
-                    // Get options belonging to this question
+                    // Get options for this question
                     List<Option> options =
                             new ArrayList<>(
                                     optionRepository.findByQuestionId(
                                             question.getId()));
 
-                    // Shuffle option order
+                    /*
+                     * Shuffle the OPTIONS.
+                     * A/B/C/D labels will be reassigned
+                     * after shuffling.
+                     */
                     Collections.shuffle(options);
+
+                    /*
+                     * Keep labels fixed as A, B, C, D
+                     * according to the new shuffled order.
+                     */
+                    for (int i = 0; i < options.size(); i++) {
+
+                        options.get(i).setOptionLabel(
+                                String.valueOf(
+                                        (char) ('A' + i)
+                                )
+                        );
+                    }
 
                     Map<String, Object> questionPaper =
                             new HashMap<>();

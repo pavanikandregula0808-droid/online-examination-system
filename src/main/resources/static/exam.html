@@ -2,79 +2,316 @@
 <html>
 <head>
     <title>Java Online Exam</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .option {
+            display: block;
+            margin: 12px 0;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Java Online Exam</h1>
+    <div class="header">
+        <h1>Java Online Exam</h1>
 
-    <div id="questions"></div>
+        <div>
+            <label>Student ID:</label>
+            <input type="number" id="studentId" value="1" min="1">
+        </div>
+    </div>
+
+    <div id="questions">
+        Loading questions...
+    </div>
 
     <button onclick="submitAnswers()">Submit Exam</button>
 
+    <div id="result"></div>
+
+
     <script>
+
         let questions = [];
 
+
+        // Load question paper
         fetch("/questions/paper/2")
             .then(response => response.json())
             .then(data => {
 
                 questions = data;
 
-                const container = document.getElementById("questions");
+                const container =
+                    document.getElementById("questions");
+
+                container.innerHTML = "";
+
 
                 data.forEach((question, index) => {
 
-                    const div = document.createElement("div");
+                    const div =
+                        document.createElement("div");
+
+                    div.className = "question";
+
 
                     div.innerHTML = `
-                        <h3>${index + 1}. ${question.questionText}</h3>
+                        <h3>
+                            ${index + 1}. ${question.questionText}
+                        </h3>
                     `;
+
 
                     question.options.forEach(option => {
 
-                        const label = document.createElement("label");
+                        const label =
+                            document.createElement("label");
+
+                        label.className = "option";
+
 
                         label.innerHTML = `
-                            <input type="radio"
-                                   name="question${question.questionId}"
-                                   value="${option.id}">
+                            <input
+                                type="radio"
+                                name="question${question.questionId}"
+                                value="${option.id}">
+                            ${option.optionLabel}.
                             ${option.optionText}
-                            <br>
                         `;
 
+
                         div.appendChild(label);
+
                     });
 
+
                     container.appendChild(div);
+
                 });
+
             })
             .catch(error => {
-                console.error("Error loading questions:", error);
-            });
 
-        function submitAnswers() {
-
-            questions.forEach(question => {
-
-                const selected = document.querySelector(
-                    `input[name="question${question.questionId}"]:checked`
+                console.error(
+                    "Error loading questions:",
+                    error
                 );
 
-                if (selected) {
-                    console.log(
-                        "Question ID:",
-                        question.questionId,
-                        "Selected Option ID:",
-                        selected.value
-                    );
-                }
+                document.getElementById("questions")
+                    .innerHTML =
+                    "Error loading questions.";
+
             });
 
-            alert("Answers selected successfully!");
+
+
+        // Submit exam
+        async function submitAnswers() {
+
+            const studentId =
+                Number(
+                    document.getElementById("studentId").value
+                );
+
+
+            if (!studentId) {
+
+                alert("Please enter Student ID");
+
+                return;
+            }
+
+
+            let answered = 0;
+
+
+            for (const question of questions) {
+
+                const selected =
+                    document.querySelector(
+                        `input[name="question${question.questionId}"]:checked`
+                    );
+
+
+                if (selected) {
+
+                    answered++;
+
+
+                    const body = {
+
+                        studentId: studentId,
+
+                        questionId:
+                            question.questionId,
+
+                        optionId:
+                            Number(selected.value)
+
+                    };
+
+
+                    try {
+
+                        await fetch("/answers", {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(body)
+
+                        });
+
+                    } catch (error) {
+
+                        console.error(
+                            "Error saving answer:",
+                            error
+                        );
+
+                    }
+
+                }
+
+            }
+
+
+            if (answered === 0) {
+
+                alert("Please select at least one answer.");
+
+                return;
+            }
+
+
+            // Get result
+            try {
+
+                const response =
+                    await fetch(
+                        "/answers/result",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    studentId: studentId
+                                })
+
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                document.getElementById("result")
+                    .style.display = "block";
+
+
+                document.getElementById("result")
+                    .innerHTML = `
+
+                        <h2>Exam Result</h2>
+
+                        <p>
+                            <b>Student ID:</b>
+                            ${result.studentId}
+                        </p>
+
+                        <p>
+                            <b>Total Questions:</b>
+                            ${result.totalQuestions}
+                        </p>
+
+                        <p>
+                            <b>Answered Questions:</b>
+                            ${result.answeredQuestions}
+                        </p>
+
+                        <p>
+                            <b>Correct Answers:</b>
+                            ${result.correctAnswers}
+                        </p>
+
+                        <p>
+                            <b>Wrong Answers:</b>
+                            ${result.wrongAnswers}
+                        </p>
+
+                        <p>
+                            <b>Score:</b>
+                            ${result.score}
+                        </p>
+
+                        <p>
+                            <b>Percentage:</b>
+                            ${result.percentage}%
+                        </p>
+
+                    `;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error getting result:",
+                    error
+                );
+
+                alert("Unable to calculate result.");
+
+            }
+
         }
+
     </script>
 
 </body>
 </html>
-
-                    
